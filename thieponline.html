@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiệp Mời - Modern Elegance</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7',
+                        gold: '#D4AF37',
+                        'gold-light': '#F3E5AB',
+                        sage: '#8A9A86',
+                        'sage-light': '#E8EFE8',
+                        charcoal: '#2C3539',
+                        blush: '#F7E7E6'
+                    },
+                    fontFamily: {
+                        serif: ['Cormorant Garamond', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                        script: ['Pinyon Script', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* CSS Animations & Custom Styles */
+        body {
+            background-color: #FDFBF7;
+            color: #2C3539;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Fade-in scroll effect */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        .animate-float {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        /* Envelope Flip & Opening Styles */
+        .envelope-wrapper {
+            perspective: 1000px;
+        }
+
+        .envelope {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            background: #E8EFE8;
+            border-radius: 8px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: all 0.8s ease-in-out;
+            cursor: pointer;
+        }
+
+        @media (min-width: 640px) {
+            .envelope {
+                width: 440px;
+                height: 300px;
+            }
+        }
+
+        /* Petal Canvas Overlay */
+        #petalCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 40;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FDFBF7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-cream text-charcoal selection:bg-gold-light selection:text-charcoal relative">
+
+    <!-- Canvas for floating petals effect -->
+    <canvas id="petalCanvas"></canvas>
+
+    <!-- Background Ambient Sound Toggle Button -->
+    <button id="musicToggle" class="fixed top-6 right-6 z-50 w-12 h-12 rounded-full bg-white/80 backdrop-blur border border-gold/30 text-gold flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300" title="Bật/Tắt Nhạc">
+        <i id="musicIcon" class="fas fa-music text-lg"></i>
+    </button>
+
+    <!-- Cover / Envelope Section -->
+    <section id="hero" class="min-h-screen flex flex-col justify-center items-center px-4 relative overflow-hidden py-12">
+        <!-- Delicate Background Elements -->
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-sage-light/40 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-blush/40 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="text-center z-10 max-w-xl mx-auto mb-10 fade-in-section is-visible">
+            <span class="text-gold tracking-[0.3em] text-xs sm:text-sm uppercase font-semibold mb-3 block">Thiệp Mời Trân Trọng</span>
+            <h1 class="font-serif text-4xl sm:text-6xl text-charcoal font-normal tracking-wide leading-tight mb-4">
+                Hoàng Nam <span class="font-script text-gold text-5xl sm:text-7xl block sm:inline my-2 sm:my-0">&</span> Thanh Trúc
+            </h1>
+            <p class="font-sans text-xs sm:text-sm tracking-widest text-charcoal/70 uppercase">Trân trọng kính mời quý khách tới tham dự buổi tiệc</p>
+        </div>
+
+        <!-- Envelope Graphic Interactive Element -->
+        <div class="envelope-wrapper z-20 my-4">
+            <div id="envelope" onclick="openCard()" class="envelope flex flex-col items-center justify-center p-6 border border-gold/20 hover:shadow-2xl transition-all group">
+                <!-- Wax Seal Impression -->
+                <div id="waxSeal" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gold/90 border-2 border-amber-200 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300 z-30">
+                    <span class="font-script text-white text-2xl sm:text-3xl">N&T</span>
+                </div>
+                <p id="openHint" class="mt-6 font-sans text-xs tracking-widest text-charcoal/60 uppercase group-hover:text-gold transition-colors">
+                    <i class="fas fa-hand-pointer mr-2 animate-bounce"></i> Chạm để mở thiệp
+                </p>
+            </div>
+        </div>
+
+        <a href="#main-content" id="scrollDownBtn" class="mt-12 opacity-0 transition-opacity duration-700 text-gold hover:text-charcoal flex flex-col items-center gap-2 text-xs tracking-widest uppercase">
+            <span>Khám phá chi tiết</span>
+            <i class="fas fa-chevron-down animate-bounce"></i>
+        </a>
+    </section>
+
+    <!-- Main Card Content Section (Initially visible smoothly) -->
+    <main id="main-content" class="max-w-4xl mx-auto px-4 py-16 space-y-24">
+
+        <!-- Couple / Event Introduction -->
+        <section class="fade-in-section text-center space-y-8 relative">
+            <div class="inline-block relative">
+                <span class="font-script text-4xl sm:text-5xl text-gold block mb-2">Save the Date</span>
+                <h2 class="font-serif text-3xl sm:text-4xl tracking-wide uppercase text-charcoal">Lễ Thành Hôn</h2>
+                <div class="w-16 h-[1px] bg-gold mx-auto mt-4"></div>
+            </div>
+
+            <!-- Date Display Card -->
+            <div class="grid grid-cols-3 max-w-md mx-auto items-center border-y border-gold/30 py-6 my-8">
+                <div class="text-center">
+                    <span class="block font-sans text-xs sm:text-sm uppercase tracking-widest text-charcoal/60">Thứ Bảy</span>
+                    <span class="font-serif text-2xl sm:text-3xl text-gold font-semibold">Tháng 12</span>
+                </div>
+                <div class="text-center border-x border-gold/30 px-4">
+                    <span class="font-serif text-4xl sm:text-6xl text-charcoal font-normal block leading-none">20</span>
+                    <span class="font-sans text-xs tracking-widest text-charcoal/50 uppercase mt-1 block">2026</span>
+                </div>
+                <div class="text-center">
+                    <span class="block font-sans text-xs sm:text-sm uppercase tracking-widest text-charcoal/60">Vào Lúc</span>
+                    <span class="font-serif text-2xl sm:text-3xl text-gold font-semibold">18:00</span>
+                </div>
+            </div>
+
+            <!-- Countdown Timer -->
+            <div id="countdown" class="flex justify-center gap-4 sm:gap-8 pt-4">
+                <div class="flex flex-col items-center bg-white border border-gold/20 rounded-lg p-3 sm:p-4 min-w-[70px] shadow-sm">
+                    <span id="days" class="font-serif text-2xl sm:text-3xl text-gold font-bold">00</span>
+                    <span class="text-[10px] sm:text-xs uppercase tracking-wider text-charcoal/60 mt-1">Ngày</span>
+                </div>
+                <div class="flex flex-col items-center bg-white border border-gold/20 rounded-lg p-3 sm:p-4 min-w-[70px] shadow-sm">
+                    <span id="hours" class="font-serif text-2xl sm:text-3xl text-gold font-bold">00</span>
+                    <span class="text-[10px] sm:text-xs uppercase tracking-wider text-charcoal/60 mt-1">Giờ</span>
+                </div>
+                <div class="flex flex-col items-center bg-white border border-gold/20 rounded-lg p-3 sm:p-4 min-w-[70px] shadow-sm">
+                    <span id="minutes" class="font-serif text-2xl sm:text-3xl text-gold font-bold">00</span>
+                    <span class="text-[10px] sm:text-xs uppercase tracking-wider text-charcoal/60 mt-1">Phút</span>
+                </div>
+                <div class="flex flex-col items-center bg-white border border-gold/20 rounded-lg p-3 sm:p-4 min-w-[70px] shadow-sm">
+                    <span id="seconds" class="font-serif text-2xl sm:text-3xl text-gold font-bold">00</span>
+                    <span class="text-[10px] sm:text-xs uppercase tracking-wider text-charcoal/60 mt-1">Giây</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery / Memories Section -->
+        <section class="fade-in-section space-y-8">
+            <div class="text-center space-y-2">
+                <span class="font-script text-3xl text-gold">Our Moments</span>
+                <h3 class="font-serif text-2xl sm:text-3xl tracking-wide uppercase">Khoảnh Khắc Hạnh Phúc</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="overflow-hidden rounded-xl shadow-md group relative h-80">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800" alt="Couple 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                        <p class="text-white text-sm font-light">Kỷ niệm ngày bên nhau</p>
+                    </div>
+                </div>
+                <div class="overflow-hidden rounded-xl shadow-md group relative h-80 md:-translate-y-4">
+                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=800" alt="Couple 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                        <p class="text-white text-sm font-light">Chặng đường yêu thương</p>
+                    </div>
+                </div>
+                <div class="overflow-hidden rounded-xl shadow-md group relative h-80">
+                    <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=800" alt="Couple 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                        <p class="text-white text-sm font-light">Hướng tới tương lai</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Event Details & Location -->
+        <section class="fade-in-section bg-white rounded-2xl p-8 sm:p-12 border border-gold/20 shadow-xl space-y-10">
+            <div class="text-center space-y-2">
+                <span class="font-script text-3xl text-gold">Location & Time</span>
+                <h3 class="font-serif text-2xl sm:text-3xl tracking-wide uppercase">Địa Điểm Tổ Chức</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <!-- Location Details -->
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-sage-light flex items-center justify-center text-sage shrink-0 mt-1">
+                            <i class="fas fa-map-marker-alt text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-serif text-xl font-semibold text-charcoal">Trung Tâm Hội Nghị Elegant Palace</h4>
+                            <p class="text-sm text-charcoal/70 mt-1 leading-relaxed">Sảnh Grand Ballroom, Tầng 3<br>123 Đường Lê Lợi, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-sage-light flex items-center justify-center text-sage shrink-0 mt-1">
+                            <i class="fas fa-clock text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-serif text-xl font-semibold text-charcoal">Thời Gian</h4>
+                            <p class="text-sm text-charcoal/70 mt-1">Đón khách: 17:30 - 20/12/2026</p>
+                            <p class="text-sm text-charcoal/70">Khai tiệc: 18:30 - 20/12/2026</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <a href="https://maps.google.com" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gold text-white font-sans text-xs uppercase tracking-widest hover:bg-gold/90 transition-colors shadow-md">
+                            <i class="fas fa-directions"></i> Chỉ Đường Trên Google Maps
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Map Frame Graphic Placeholder -->
+                <div class="w-full h-64 bg-sage-light/50 rounded-xl overflow-hidden border border-gold/20 relative flex items-center justify-center text-center p-6">
+                    <div class="space-y-3">
+                        <i class="fas fa-map-marked-alt text-4xl text-gold/60"></i>
+                        <p class="font-serif text-lg text-charcoal/80"> Elegant Palace Center</p>
+                        <span class="text-xs text-charcoal/50 block">Ấn nút "Chỉ đường" để xem bản đồ chi tiết</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RSVP Form Section -->
+        <section class="fade-in-section max-w-2xl mx-auto bg-cream p-8 sm:p-12 rounded-2xl border border-gold/30 shadow-lg text-center space-y-8">
+            <div class="space-y-2">
+                <span class="font-script text-3xl text-gold">R.S.V.P</span>
+                <h3 class="font-serif text-2xl sm:text-3xl tracking-wide uppercase">Xác Nhận Tham Dự</h3>
+                <p class="text-xs sm:text-sm text-charcoal/70 max-w-md mx-auto">Sự hiện diện của quý vị là niềm vinh hạnh lớn nhất của gia đình chúng tôi. Vui lòng phản hồi trước ngày 10/12/2026.</p>
+            </div>
+
+            <form id="rsvpForm" onsubmit="handleRSVP(event)" class="space-y-6 text-left">
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-charcoal/70 mb-2">Họ & Tên *</label>
+                    <input type="text" required placeholder="Nhập họ và tên của bạn" class="w-full px-4 py-3 rounded-lg border border-gold/30 bg-white focus:outline-none focus:border-gold transition-colors text-sm">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-charcoal/70 mb-2">Bạn sẽ tham dự?</label>
+                        <select class="w-full px-4 py-3 rounded-lg border border-gold/30 bg-white focus:outline-none focus:border-gold transition-colors text-sm">
+                            <option value="yes">Chắc chắn sẽ đến</option>
+                            <option value="no">Rất tiếc không thể đến</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-charcoal/70 mb-2">Số người đi cùng</label>
+                        <select class="w-full px-4 py-3 rounded-lg border border-gold/30 bg-white focus:outline-none focus:border-gold transition-colors text-sm">
+                            <option value="1">1 người</option>
+                            <option value="2">2 người</option>
+                            <option value="3">3 người</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-charcoal/70 mb-2">Lời chúc gửi tới cặp đôi</label>
+                    <textarea rows="3" placeholder="Gửi những lời chúc tốt đẹp nhất..." class="w-full px-4 py-3 rounded-lg border border-gold/30 bg-white focus:outline-none focus:border-gold transition-colors text-sm"></textarea>
+                </div>
+
+                <button type="submit" class="w-full py-4 rounded-lg bg-gold text-white font-sans text-xs uppercase tracking-widest font-semibold hover:bg-gold/90 transition-all shadow-md">
+                    Gửi Phản Hồi
+                </button>
+            </form>
+
+            <!-- Success Message Container -->
+            <div id="rsvpSuccess" class="hidden p-6 bg-sage-light rounded-lg border border-sage text-sage font-sans text-sm">
+                <i class="fas fa-check-circle text-2xl mb-2 block"></i>
+                Cảm ơn bạn đã gửi phản hồi! Chúng tôi rất hân hạnh được đón tiếp bạn.
+            </div>
+        </section>
+
+        <!-- Footer / Thank you -->
+        <footer class="fade-in-section text-center py-12 border-t border-gold/20 space-y-4">
+            <span class="font-script text-4xl text-gold">Thank You</span>
+            <p class="font-serif text-lg text-charcoal/80">Rất hân hạnh được đón tiếp quý khách!</p>
+            <p class="text-[10px] text-charcoal/40 tracking-widest uppercase">Designed with Elegance & Modern Aesthetics</p>
+        </footer>
+
+    </main>
+
+    <!-- Web Audio API for Soft Ambient Sound -->
+    <script>
+        // Floating Petals Canvas Effect
+        const canvas = document.getElementById('petalCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        class Petal {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = -20;
+                this.size = Math.random() * 8 + 6;
+                this.speedY = Math.random() * 1.5 + 0.5;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.opacity = Math.random() * 0.5 + 0.3;
+                this.rotation = Math.random() * 360;
+                this.rotSpeed = Math.random() * 2 - 1;
+                // Soft pastel colors for petals
+                const colors = ['#F7E7E6', '#FDFBF7', '#E8EFE8', '#F3E5AB'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += Math.sin(this.y * 0.01) + this.speedX;
+                this.rotation += this.rotSpeed;
+
+                if (this.y > height + 20) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+
+                // Draw petal shape
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-this.size, -this.size, -this.size, this.size, 0, this.size * 1.5);
+                ctx.bezierCurveTo(this.size, this.size, this.size, -this.size, 0, 0);
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        const petals = Array.from({ length: 25 }, () => new Petal());
+
+        function animatePetals() {
+            ctx.clearRect(0, 0, width, height);
+            petals.forEach(petal => {
+                petal.update();
+                petal.draw();
+            });
+            requestAnimationFrame(animatePetals);
+        }
+
+        animatePetals();
+
+        // Envelope Interaction
+        let isOpen = false;
+        function openCard() {
+            if (isOpen) return;
+            isOpen = true;
+
+            const envelope = document.getElementById('envelope');
+            const waxSeal = document.getElementById('waxSeal');
+            const openHint = document.getElementById('openHint');
+            const scrollDownBtn = document.getElementById('scrollDownBtn');
+
+            waxSeal.style.transform = 'scale(0) rotate(180deg)';
+            waxSeal.style.transition = 'all 0.5s ease-in';
+
+            setTimeout(() => {
+                envelope.style.transform = 'scale(1.05) translateY(-20px)';
+                envelope.style.opacity = '0.9';
+                openHint.innerText = "Welcome!";
+                scrollDownBtn.classList.remove('opacity-0');
+                scrollDownBtn.classList.add('opacity-100');
+
+                // Smooth scroll to main content
+                document.getElementById('main-content').scrollIntoView({ behavior: 'smooth' });
+            }, 400);
+
+            // Play ambient soft tone if enabled
+            playSoftTone();
+        }
+
+        // Scroll Animation Observer
+        const observerOptions = {
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Countdown Timer Logic (Target Date: Dec 20, 2026)
+        const targetDate = new Date('December 20, 2026 18:00:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+
+            if (difference > 0) {
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                document.getElementById('days').innerText = String(days).padStart(2, '0');
+                document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+                document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+                document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+            }
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // RSVP Handler
+        function handleRSVP(e) {
+            e.preventDefault();
+            document.getElementById('rsvpForm').classList.add('hidden');
+            document.getElementById('rsvpSuccess').classList.remove('hidden');
+        }
+
+        // Web Audio API Ambient Tone Generator (No external audio files needed)
+        let audioCtx = null;
+        let isPlaying = false;
+
+        function playSoftTone() {
+            if (isPlaying) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                isPlaying = true;
+
+                // Simple soothing arpeggio pattern
+                const notes = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
+                let noteIdx = 0;
+
+                setInterval(() => {
+                    if (!isPlaying || !audioCtx) return;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.value = notes[noteIdx % notes.length];
+
+                    gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2.5);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 2.5);
+
+                    noteIdx++;
+                }, 1200);
+
+            } catch(e) {
+                console.log("Audio play blocked or not supported");
+            }
+        }
+
+        const musicBtn = document.getElementById('musicToggle');
+        const musicIcon = document.getElementById('musicIcon');
+
+        musicBtn.addEventListener('click', () => {
+            if (!isPlaying) {
+                playSoftTone();
+                musicIcon.classList.remove('fa-music');
+                musicIcon.classList.add('fa-pause');
+            } else {
+                if (audioCtx) {
+                    audioCtx.close();
+                    audioCtx = null;
+                }
+                isPlaying = false;
+                musicIcon.classList.remove('fa-pause');
+                musicIcon.classList.add('fa-music');
+            }
+        });
+    </script>
+</body>
+</html>
